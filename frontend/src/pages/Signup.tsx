@@ -3,6 +3,10 @@ import { http } from '../api/http'
 import { useAppDispatch } from '../store'
 import { setCredentials } from '../features/auth/authSlice'
 import { useNavigate } from 'react-router-dom'
+import Container from '../components/layout/Container'
+import Input from '../components/ui/Input'
+import Button from '../components/ui/Button'
+import { motion } from 'framer-motion'
 
 export default function Signup() {
   const [name, setName] = useState('')
@@ -29,43 +33,23 @@ export default function Signup() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: '40px auto' }}>
-      <h3>Signup</h3>
-      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-      <form onSubmit={onSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label>Name</label>
-          <input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: 8 }}
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creating account...' : 'Signup'}
-        </button>
-      </form>
+    <div className="py-10">
+      <Container>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="card max-w-md mx-auto">
+          <div className="card-body">
+            <h3 className="text-xl font-bold mb-6">Signup</h3>
+            {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-red-700 text-sm">{error}</div>}
+            <form onSubmit={onSubmit} className="space-y-4">
+              <Input label="Name" value={name} onChange={e => setName(e.target.value)} required />
+              <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+              <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+              <div className="flex items-center justify-end">
+                <Button type="submit" loading={loading}>Signup</Button>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+      </Container>
     </div>
   )
 }
