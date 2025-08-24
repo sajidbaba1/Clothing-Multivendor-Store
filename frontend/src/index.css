@@ -65,6 +65,15 @@
     animation: marquee-scroll 30s linear infinite;
   }
   .marquee-fast {
-    animation: marquee-scroll 18s linear infinite;
+    animation: marquee-scroll 24s linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Softly fade left/right edges for horizontally scrolling banners */
+  .fade-edges {
+    position: relative;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
   }
 }

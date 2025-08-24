@@ -8,6 +8,7 @@ import React from 'react'
 
 export default function Navbar() {
   const auth = useAppSelector(s => s.auth)
+  const cartCount = useAppSelector(s => s.cart.items.reduce((a, b) => a + b.quantity, 0))
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -40,6 +41,10 @@ export default function Navbar() {
 
           {/* Auth actions */}
           <div className="flex items-center gap-2">
+            {/* Cart */}
+            <Button variant="ghost" onClick={() => navigate('/cart')}>
+              Cart{cartCount ? ` (${cartCount})` : ''}
+            </Button>
             {!auth.token ? (
               <div className="hidden md:flex gap-2">
                 <Button variant="ghost" onClick={() => navigate('/login')}>Login</Button>
@@ -48,6 +53,15 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-3">
                 <motion.span layout className="text-sm text-gray-600">{auth.email} ({auth.role})</motion.span>
+                {auth.role !== 'vendor' && (
+                  <Button onClick={() => navigate('/seller/apply')}>Become a seller</Button>
+                )}
+                {auth.role === 'vendor' && (
+                  <Button variant="ghost" onClick={() => navigate('/vendor')}>Vendor</Button>
+                )}
+                {auth.role === 'admin' && (
+                  <Button variant="ghost" onClick={() => navigate('/admin')}>Admin</Button>
+                )}
                 <Button variant="secondary" onClick={onLogout}>Logout</Button>
               </div>
             )}
@@ -58,6 +72,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 py-2 overflow-x-auto">
           <nav className="flex items-center gap-1">
             <NavLink to="/" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>Home</NavLink>
+            <NavLink to="/catalog" className={({ isActive }) => `${linkBase} ${isActive ? active : ''}`}>Catalog</NavLink>
             <a href="#" className={linkBase}>Men</a>
             <a href="#" className={linkBase}>Women</a>
             <a href="#" className={linkBase}>Kids</a>

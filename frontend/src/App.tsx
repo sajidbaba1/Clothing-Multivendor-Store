@@ -11,6 +11,16 @@ import Container from './components/layout/Container'
 import HeroCarousel from './components/hero/HeroCarousel'
 import CategorySlider from './components/sliders/CategorySlider'
 import BrandSlider from './components/sliders/BrandSlider'
+import Catalog from './pages/catalog/Catalog'
+import SellerApply from './pages/seller/SellerApply'
+import VendorDashboard from './pages/vendor/Dashboard'
+import AdminDashboard from './pages/admin/Dashboard'
+import ProductPage from './pages/product/Product'
+import CartPage from './pages/shop/Cart'
+import CheckoutPage from './pages/shop/Checkout'
+import ThankYouPage from './pages/shop/ThankYou'
+import { formatINR } from './utils/currency'
+import ChatDock from './components/chat/ChatDock'
 
 // Navbar moved to components/layout/Navbar
 
@@ -69,7 +79,7 @@ function Home() {
                   <div className="aspect-[3/4] w-full rounded-lg bg-gray-200" />
                   <div className="mt-3">
                     <p className="text-sm text-gray-700">Product {i + 1}</p>
-                    <p className="font-semibold">$ {(19 + i).toFixed(2)}</p>
+                    <p className="font-semibold">{formatINR(1499 + i*100)}</p>
                   </div>
                   <button className="mt-3 w-full rounded-md bg-primary-600 text-white py-2 text-sm font-semibold hover:bg-primary-700">Add to cart</button>
                 </div>
@@ -104,8 +114,18 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/request-otp" element={<RequestOtp />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/thank-you" element={<ThankYouPage />} />
+          <Route path="/seller/apply" element={<SellerApply />} />
+          <Route path="/vendor" element={<VendorDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </div>
+      {/* Global AI Chat Dock */}
+      <ChatDock />
     </div>
   )
 }

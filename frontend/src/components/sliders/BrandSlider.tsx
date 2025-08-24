@@ -25,12 +25,12 @@ export default function BrandSlider() {
   const track = [...images, ...images]
 
   return (
-    <div className="relative overflow-hidden">
-      <div className="marquee-fast flex items-center gap-8 w-max">
+    <div className="relative overflow-hidden fade-edges py-6">
+      <div className="marquee-fast flex items-center gap-20 md:gap-28 w-max">
         {track.map((src, i) => (
-          <div key={i} className="shrink-0 opacity-80 hover:opacity-100 transition">
-            <div className="h-12 sm:h-14 grid place-items-center">
-              <BlurImage src={src} alt={`Brand ${i + 1}`} className="h-full w-auto object-contain grayscale hover:grayscale-0" />
+          <div key={i} className="shrink-0 opacity-95 hover:opacity-100 transition">
+            <div className="h-40 sm:h-52 md:h-64 min-w-[220px] sm:min-w-[260px] md:min-w-[320px] grid place-items-center bg-white rounded-xl px-8 shadow-sm">
+              <BlurImage src={src} alt={`Brand ${i + 1}`} className="h-32 sm:h-44 md:h-56 w-auto object-contain grayscale hover:grayscale-0" />
             </div>
           </div>
         ))}

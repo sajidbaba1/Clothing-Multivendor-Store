@@ -1,0 +1,1 @@
+This folder contains pages scaffolded for seller onboarding, vendor/admin dashboards, catalog with filters, cart/checkout with Razorpay stub, and thank-you page. Connect to backend endpoints to enable full functionality.
