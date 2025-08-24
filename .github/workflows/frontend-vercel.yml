@@ -1,0 +1,89 @@
+# Frontend CI/CD: Vercel deploys (Preview for branches, Production on main)
+# Required GitHub Secrets (Settings > Secrets and variables > Actions):
+# - VERCEL_TOKEN        : Vercel personal token
+# - VERCEL_ORG_ID       : Vercel Organization ID
+# - VERCEL_PROJECT_ID   : Vercel Project ID
+#
+# Optional: Adjust FRONTEND_DIR if your frontend is not in ./frontend
+
+name: Frontend CI/CD (Vercel)
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-vercel.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
+      - 'yarn.lock'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
+      - 'yarn.lock'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    concurrency: vercel-${{ github.ref }}
+    env:
+      FRONTEND_DIR: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect frontend location
+        id: detect
+        shell: bash
+        run: |
+          if [ -f "package.json" ]; then
+            echo "workdir=." >> $GITHUB_OUTPUT
+          elif [ -f "$FRONTEND_DIR/package.json" ]; then
+            echo "workdir=$FRONTEND_DIR" >> $GITHUB_OUTPUT
+          else
+            echo "workdir=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        if: ${{ steps.detect.outputs.workdir != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            ${{ steps.detect.outputs.workdir }}/package-lock.json
+            ${{ steps.detect.outputs.workdir }}/pnpm-lock.yaml
+            ${{ steps.detect.outputs.workdir }}/yarn.lock
+
+      - name: Install dependencies
+        if: ${{ steps.detect.outputs.workdir != '' }}
+        working-directory: ${{ steps.detect.outputs.workdir }}
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build
+        if: ${{ steps.detect.outputs.workdir != '' }}
+        working-directory: ${{ steps.detect.outputs.workdir }}
+        run: npm run build --if-present
+
+      - name: Deploy to Vercel
+        if: ${{ steps.detect.outputs.workdir != '' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
+        uses: vercel/action@v3
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ${{ steps.detect.outputs.workdir }}
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+
+      - name: Skip (frontend not found)
+        if: ${{ steps.detect.outputs.workdir == '' }}
+        run: echo "No frontend package.json found. Skipping build/deploy."
